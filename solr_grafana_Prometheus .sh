@@ -1,7 +1,10 @@
-docker run -dit -p 7574:7574 -p 8983:8983 -p 8984:8984 -p 3000:3000 -p 9090:9090 -p 9854:9854 -p 9100:9100 --name solr_graf ubuntu
-docker exec -it solr_graf bash
+# Docker exec commands
+
+# docker run -dit -p 7574:7574 -p 8983:8983 -p 8984:8984 -p 3000:3000 -p 9090:9090 -p 9854:9854 -p 9100:9100 --name solr_graf ubuntu
+# docker exec -it solr_graf bash
 
 # Basic installations
+
 apt update
 apt install default-jre -y
 apt-get install wget -y
@@ -28,6 +31,15 @@ bin/solr -e cloud -force
 cd contrib/prometheus-exporter/
 bin/solr-exporter -p 9854 -z localhost:9983 -f ./conf/solr-exporter-config.xml -n 16 # -> For single Zk
 ./bin/solr-exporter -p 9854 -z zk1:2181,zk2:2181,zk3:2181 -f ./conf/solr-exporter-config.xml -n 16 # -> For multiple Zk
+./bin/solr-exporter -p 9854 -z  172.17.0.3:2181,172.17.0.6:2181,172.17.0.7:2181 -f ./conf/solr-exporter-config.xml -n 16 # -> For multiple Zk
+
+# for secure solr
+vi ./solr-8.11.2/contrib/prometheus-exporter/basicauth.properties
+export JAVA_OPTS="-Djavax.net.ssl.trustStore=truststore.p12 -Djavax.net.ssl.trustStorePassword=truststorePassword -Dsolr.httpclient.builder.factory=org.apache.solr.client.solrj.impl.PreemptiveBasicAuthClientBuilderFactory -Dsolr.httpclient.config=basicauth.properties"
+export ZK_CREDS_AND_ACLS="-DzkCredentialsProvider=org.apache.solr.common.cloud.VMParamsSingleSetCredentialsDigestZkCredentialsProvider -DzkDigestUsername=admin -DzkDigestPassword=admin"
+export CLASSPATH_PREFIX="../../server/solr-webapp/webapp/WEB-INF/lib/commons-codec-1.11.jar"
+./bin/solr-exporter -p 9854 -z 172.17.0.2:2181,172.17.0.4:2181,172.17.0.6:2181 -f ./conf/solr-exporter-config.xml -n 16
+
 
 cd ..
 
@@ -35,7 +47,7 @@ cd ..
 wget https://github.com/prometheus/prometheus/releases/download/v2.50.1/prometheus-2.50.1.linux-amd64.tar.gz
 tar xvfz prometheus-2.50.1.linux-amd64.tar.gz
 cd prometheus-2.50.1.linux-amd64
-vim prometheus.yml
+vi prometheus.yml
 # prometheus.yml Configurations for node_exporter and Solr    (Add in the end) 
      - job_name: 'node'
           static_configs:
@@ -43,6 +55,7 @@ vim prometheus.yml
      - job_name: 'solr'
           static_configs:
           - targets: ['localhost:9854']
+          
 ./prometheus
 
 cd 
@@ -53,7 +66,7 @@ http://localhost:9090/targets -> Conformation
 
 # installation steps for node_exporter
 wget https://github.com/prometheus/node_exporter/releases/download/v1.2.1/node_exporter-1.2.1.linux-amd64.tar.gz
-tar -xzf node_exporter-1.2.0.linux-amd64.tar.gz
+tar -xzf node_exporter-1.2.1.linux-amd64.tar.gz
 cd node_exporter-1.2.1.linux-amd64
 ./node_exporter
 
@@ -69,4 +82,5 @@ https://grafana.com/grafana/dashboards/405  -> Node_extracter
 https://grafana.com/grafana/dashboards/12456 -> Solr
 https://grafana.com/grafana/dashboards/2551  -> Solr
 https://grafana.com/grafana/dashboards/3888  -> Solr
+
 
