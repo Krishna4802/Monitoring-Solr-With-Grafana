@@ -1,4 +1,4 @@
-# Docker exec commands
+# Docker exec commands -optional
 
 # docker run -dit -p 7574:7574 -p 8983:8983 -p 8984:8984 -p 3000:3000 -p 9090:9090 -p 9854:9854 -p 9100:9100 --name solr_graf ubuntu
 # docker exec -it solr_graf bash
