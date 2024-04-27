@@ -75,9 +75,9 @@
     
     ./node_exporter
 
-## service monitoring with grafana 
 
-## installation steps for blackbox exportor
+## service monitoring with grafana 
+### installation steps for blackbox exportor
 
     wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.25.0/blackbox_exporter-0.25.0.linux-amd64.tar.gz
     
