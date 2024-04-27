@@ -43,6 +43,33 @@ export CLASSPATH_PREFIX="../../server/solr-webapp/webapp/WEB-INF/lib/commons-cod
 
 cd ..
 
+# service monitoring with grafana 
+
+# installation steps for blackbox exportor
+
+wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.25.0/blackbox_exporter-0.25.0.linux-amd64.tar.gz
+tar -xzf blackbox_exporter-0.25.0.linux-amd64.tar.gz
+cd blackbox_exporter-0.25.0.linux-amd64
+chmod +x blackbox_exporter
+
+#configurations of blackbox exportor
+
+service.yml file (create in any location and configure correcly in prometheus.yml)
+          - targets:
+          - 172.17.0.3:7983
+          labels:
+          group: solr_test
+
+          - targets:
+          - 172.17.0.4:9983
+          - 172.17.0.2:8983
+          labels:
+          group: catcher
+
+
+./blackbox_exporter
+
+
 # installation steps for prometheus
 wget https://github.com/prometheus/prometheus/releases/download/v2.50.1/prometheus-2.50.1.linux-amd64.tar.gz
 tar xvfz prometheus-2.50.1.linux-amd64.tar.gz
@@ -55,7 +82,21 @@ vi prometheus.yml
      - job_name: 'solr'
           static_configs:
           - targets: ['localhost:9854']
-          
+     - job_name: "blackbox-83"
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    file_sd_configs:
+    - files:
+      - "/media/services.yml"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 172.17.0.4:9115
+        
 ./prometheus
 
 cd 
@@ -83,4 +124,4 @@ https://grafana.com/grafana/dashboards/12456 -> Solr
 https://grafana.com/grafana/dashboards/2551  -> Solr
 https://grafana.com/grafana/dashboards/3888  -> Solr
 
-
+https://grafana.com/grafana/dashboards/11992  -> service monitoring
