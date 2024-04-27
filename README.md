@@ -90,20 +90,20 @@
 ## configurations of blackbox exportor
 
 ### service.yml file (create in any location and configure correcly in prometheus.yml)
-          - targets:
-          - 172.17.0.3:7983
-          labels:
-          group: solr_test
+      - targets:
+      - 172.17.0.3:7983
+      labels:
+      group: solr_test
 
-          - targets:
-          - 172.17.0.4:9983
-          - 172.17.0.2:8983
-          labels:
-          group: catcher
+      - targets:
+      - 172.17.0.4:9983
+      - 172.17.0.2:8983
+      labels:
+      group: catcher
           
 ### Finally start blackbox
 
-./blackbox_exporter
+    ./blackbox_exporter
 
 
 
