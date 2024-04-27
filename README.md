@@ -79,14 +79,17 @@
 
 ## installation steps for blackbox exportor
 
-wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.25.0/blackbox_exporter-0.25.0.linux-amd64.tar.gz
-tar -xzf blackbox_exporter-0.25.0.linux-amd64.tar.gz
-cd blackbox_exporter-0.25.0.linux-amd64
-chmod +x blackbox_exporter
+    wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.25.0/blackbox_exporter-0.25.0.linux-amd64.tar.gz
+    
+    tar -xzf blackbox_exporter-0.25.0.linux-amd64.tar.gz
+    
+    cd blackbox_exporter-0.25.0.linux-amd64
+    
+    chmod +x blackbox_exporter
 
 ## configurations of blackbox exportor
 
-service.yml file (create in any location and configure correcly in prometheus.yml)
+### service.yml file (create in any location and configure correcly in prometheus.yml)
           - targets:
           - 172.17.0.3:7983
           labels:
